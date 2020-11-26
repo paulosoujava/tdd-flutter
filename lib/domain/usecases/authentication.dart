@@ -11,5 +11,4 @@ class AuthenticationParams {
 
   AuthenticationParams({@required this.email, @required this.secret});
 
-  Map toJseon() => {'email': email, 'password': secret};
 }
