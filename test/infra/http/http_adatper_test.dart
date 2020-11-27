@@ -19,12 +19,16 @@ class HttpAdadpter {
 class ClientSpy extends Mock implements Client {}
 
 void main() {
+  ClientSpy client;
+  HttpAdadpter sut;
+  String url;
+  setUp(() {
+    client = ClientSpy();
+    sut = HttpAdadpter(client);
+    url = faker.internet.httpUrl();
+  });
   group('post', () {
     test('should call post with correct values', () async {
-      final client = ClientSpy();
-      final sut = HttpAdadpter(client);
-      final url = faker.internet.httpUrl();
-
       await sut.request(url: url, method: 'post');
 
       verify(client.post(url, headers: {
