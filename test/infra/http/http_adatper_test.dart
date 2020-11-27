@@ -17,7 +17,8 @@ class HttpAdadpter {
       'content-type': 'application/json',
       'accept': 'application/json'
     };
-    await client.post(url, headers: headers, body: jsonEncode(body));
+    final payload = body != null ? jsonEncode(body) : null;
+    await client.post(url, headers: headers, body: payload);
   }
 }
 
@@ -43,6 +44,12 @@ void main() {
             'accept': 'application/json'
           },
           body: '{"any_key":"any_value"}'));
+    });
+
+    test('should call post without body correct values', () async {
+      await sut.request(url: url, method: 'post');
+
+      verify(client.post(any, headers: anyNamed('headers')));
     });
   });
 }
