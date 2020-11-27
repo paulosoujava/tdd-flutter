@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
 import 'package:clean_code/infra/http/http.dart';
+import 'package:clean_code/data/http/http.dart';
 
 class ClientSpy extends Mock implements Client {}
 
@@ -17,7 +18,7 @@ void main() {
     sut = HttpAdadpter(client);
     url = faker.internet.httpUrl();
   });
-  
+
   group('post', () {
     PostExpectation mockRequest() => when(
         client.post(any, headers: anyNamed('headers'), body: anyNamed('body')));
@@ -75,5 +76,12 @@ void main() {
 
       expect(response, null);
     });
+    test('should return BadRequestError if post returns 400', () async {
+        mockResponse(400);
+        final future =  sut.request(url: url, method: 'post');
+
+        expect(future, throwsA(HttpError.badRequest));
+      });
+  
   });
 }

@@ -18,10 +18,15 @@ class HttpAdadpter implements HttpClient {
     final payload = body != null ? jsonEncode(body) : null;
     final response = await client.post(url, headers: headers, body: payload);
 
-    if(response.statusCode == 200 ){
-      return response.body.isEmpty ? null : jsonDecode(response.body);
-    }
+    return _handleResponse(response);
+  }
 
-    return null;
+  Map _handleResponse(Response response) {
+    if (response.statusCode == 200) {
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    } else if (response.statusCode == 204) {
+      return null;
+    }
+    throw HttpError.badRequest;
   }
 }
