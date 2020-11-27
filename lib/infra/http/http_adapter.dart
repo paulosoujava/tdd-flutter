@@ -16,8 +16,10 @@ class HttpAdadpter implements HttpClient {
       'accept': 'application/json'
     };
     final payload = body != null ? jsonEncode(body) : null;
-    final response = await client.post(url, headers: headers, body: payload);
-
+    var response = Response('body', 500);
+    if (method == 'post') {
+      response = await client.post(url, headers: headers, body: payload);
+    }
     return _handleResponse(response);
   }
 
