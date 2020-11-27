@@ -20,7 +20,12 @@ class HttpAdadpter implements HttpClient {
     };
     final payload = body != null ? jsonEncode(body) : null;
     final response = await client.post(url, headers: headers, body: payload);
-    return response.body.isEmpty ? null : jsonDecode(response.body);
+
+    if(response.statusCode == 200 ){
+      return response.body.isEmpty ? null : jsonDecode(response.body);
+    }
+
+    return null;
   }
 }
 
@@ -82,6 +87,13 @@ void main() {
 
     test('should return null if post return 204', () async {
       mockResponse(204, body: '');
+      final response = await sut.request(url: url, method: 'post');
+
+      expect(response, null);
+    });
+
+    test('should return null if post return 204 with data', () async {
+      mockResponse(204);
       final response = await sut.request(url: url, method: 'post');
 
       expect(response, null);
