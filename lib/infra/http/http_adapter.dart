@@ -26,7 +26,9 @@ class HttpAdadpter implements HttpClient {
       return response.body.isEmpty ? null : jsonDecode(response.body);
     } else if (response.statusCode == 204) {
       return null;
+    }else if( response.statusCode == 400 ){
+      throw HttpError.badRequest;
     }
-    throw HttpError.badRequest;
+    throw HttpError.serverError;
   }
 }
