@@ -82,6 +82,13 @@ void main() {
 
         expect(future, throwsA(HttpError.badRequest));
       });
+
+      test('should return BadRequestError if post returns 400 with empty body', () async {
+        mockResponse(400, body: '');
+        final future =  sut.request(url: url, method: 'post');
+
+        expect(future, throwsA(HttpError.badRequest));
+      });
   
   });
 }
