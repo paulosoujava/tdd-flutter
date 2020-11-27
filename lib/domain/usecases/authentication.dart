@@ -1,7 +1,7 @@
 import 'package:clean_code/domain/entities/account_entity.dart';
 import 'package:meta/meta.dart';
 
-abstract class Atuhentication {
+abstract class Authentication {
   Future<AccountEntity> auth(AuthenticationParams params);
 }
 
