@@ -94,11 +94,22 @@ void main() {
             url: anyNamed('url'),
             method: anyNamed('method'),
             body: anyNamed('body')))
-        .thenAnswer((_) async =>
-            {'accessToken': accessToken, 'name': faker.person.name()});
+        .thenAnswer((_) async => {'accessToken': accessToken, 'name': faker.person.name()});
 
     final account = await sut.auth(params);
 
     expect(account.token, accessToken);
+  });
+
+ test('should throw UnrxprctedError if HttpClient returns 200 with invalid data',  () async {
+    when(httpClient.request(
+            url: anyNamed('url'),
+            method: anyNamed('method'),
+            body: anyNamed('body')))
+        .thenAnswer((_) async => {'invalid_key': 'invalid_value'});
+
+    final future = sut.auth(params);
+
+    expect(future, throwsA(DomainError.unexpected));
   });
 }
