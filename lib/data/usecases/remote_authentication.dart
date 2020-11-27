@@ -1,5 +1,4 @@
 //externals
-import 'package:clean_code/domain/entities/account_entity.dart';
 import 'package:meta/meta.dart';
 //domain
 import '../../domain/usecases/authentication.dart';
