@@ -83,7 +83,7 @@ void main() {
         expect(future, throwsA(HttpError.badRequest));
       });
 
-      test('should return BadRequestError if post returns 400 with empty body', () async {
+    test('should return BadRequestError if post returns 400 with empty body', () async {
         mockResponse(400, body: '');
         final future =  sut.request(url: url, method: 'post');
 
@@ -96,5 +96,11 @@ void main() {
         expect(future, throwsA(HttpError.serverError));
       });
 
+    test('should return UnauthorizedError if post returns 401', () async {
+        mockResponse(401);
+        final future =  sut.request(url: url, method: 'post');
+
+        expect(future, throwsA(HttpError.unauthorized));
+      });
   });
 }
