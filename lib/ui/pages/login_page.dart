@@ -1,41 +1,64 @@
 import 'package:flutter/material.dart';
 
+import '../components/components.dart';
+
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              child: Image(
-                image: AssetImage('lib/ui/assets/logo.png'),
-              ),
+            LoginHeader(),
+            SizedBox(
+              width: 32,
+              height: 52,
             ),
-            Text('Login'.toUpperCase()),
-            Form(
-                child: Column(
-              children: [
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'Email', icon: Icon(Icons.email)),
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                      labelText: 'Senha', icon: Icon(Icons.lock)),
-                  obscureText: true,
-                ),
-                RaisedButton(
-                  onPressed: () {},
-                  child: Text('Entrar'.toUpperCase()),
-                ),
-                FlatButton.icon(
-                    onPressed: null,
-                    icon: Icon(Icons.person),
-                    label: Text('Criar Conta'.toUpperCase()))
-              ],
-            ))
+            HeadLine1(text: 'Login'),
+            SizedBox(
+              width: 32,
+              height: 52,
+            ),
+            Padding(
+              padding: EdgeInsets.all(32),
+              child: Form(
+                  child: Column(
+                children: [
+                  TextFormField(
+                    decoration: InputDecoration(
+                      labelText: 'Email',
+                      icon: Icon(
+                        Icons.email,
+                        color: Theme.of(context).primaryColorLight,
+                      ),
+                    ),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                  TextFormField(
+                    decoration: InputDecoration(
+                        labelText: 'Senha',
+                        icon: Icon(
+                          Icons.lock,
+                          color: Theme.of(context).primaryColorLight,
+                        )),
+                    obscureText: true,
+                  ),
+                  SizedBox(
+                    width: 32,
+                    height: 32,
+                  ),
+                  RaisedButton(
+                    onPressed: () {},
+                    child: Text('Entrar'.toUpperCase()),
+                  ),
+                  FlatButton.icon(
+                      onPressed: () {},
+                      icon: Icon(Icons.person),
+                      label: Text('Criar Conta'.toUpperCase()))
+                ],
+              )),
+            )
           ],
         ),
       ),
