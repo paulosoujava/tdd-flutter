@@ -48,6 +48,7 @@ class LoginPage extends StatelessWidget {
                           color: Theme.of(context).primaryColorLight,
                         )),
                     obscureText: true,
+                    onChanged: presenter.validatePassword,
                   ),
                   SizedBox(
                     width: 32,

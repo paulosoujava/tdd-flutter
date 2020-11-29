@@ -38,8 +38,13 @@ void main() {
   testWidgets('should call validate with correct values',
       (WidgetTester tester) async {
     await loadPage(tester);
+
     final email = faker.internet.email();
     await tester.enterText(find.bySemanticsLabel('Email'), email);
     verify(presenter.validateEmail(email));
+
+    final password = faker.internet.password();
+    await tester.enterText(find.bySemanticsLabel('Senha'), password);
+    verify(presenter.validatePassword(password));
   });
 }
