@@ -1,4 +1,4 @@
-import 'package:clean_code/main/factories/pages//login/login_validation_factory.dart';
+import 'package:clean_code/main/factories/pages/login/login_validation_factory.dart';
 import 'package:clean_code/validation/validators/validators.dart';
 import 'package:test/test.dart';
 
