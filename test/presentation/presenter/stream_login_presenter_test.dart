@@ -1,8 +1,8 @@
-import 'package:clean_code/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:clean_code/domain/helpers/helpers.dart';
 import 'package:clean_code/domain/entities/entities.dart';
 import 'package:clean_code/domain/usecases/authentication.dart';
 import 'package:clean_code/presentation/presenters/stream_login_presenter.dart';
@@ -147,6 +147,12 @@ void main() {
     expectLater(sut.isLoadingStream, emits(false));
     sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Culpa do estagiário, tente mais tarde...')));
 
+    await sut.auth();
+  });
+
+  test('should no emit after dispose', () async {
+    expectLater(sut.emailErrorStream, neverEmits(null));
+    sut.dispose();
     await sut.auth();
   });
 }
