@@ -10,81 +10,110 @@ class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            LoginHeader(),
-            SizedBox(
-              width: 32,
-              height: 52,
-            ),
-            HeadLine1(text: 'Login'),
-            SizedBox(
-              width: 32,
-              height: 52,
-            ),
-            Padding(
-              padding: EdgeInsets.all(32),
-              child: Form(
-                  child: Column(
-                children: [
-                  StreamBuilder<String>(
-                      stream: presenter.emailErrorStream,
-                      builder: (context, snapshot) {
-                        return TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'Email',
-                            icon: Icon(
-                              Icons.email,
-                              color: Theme.of(context).primaryColorLight,
-                            ),
-                            errorText: snapshot.data?.isEmpty == true
-                                ? null
-                                : snapshot.data,
+      body: Builder(
+        builder: (context) {
+          presenter.isLoadingStream.listen((isloading) {
+            if (isloading) {
+              showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  child: SimpleDialog(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          CircularProgressIndicator(),
+                          SizedBox(
+                            height: 10,
                           ),
-                          keyboardType: TextInputType.emailAddress,
-                          onChanged: presenter.validateEmail,
-                        );
-                      }),
-                  StreamBuilder<String>(
-                      stream: presenter.passwordErrorStream,
-                      builder: (context, snapshot) {
-                        return TextFormField(
-                          decoration: InputDecoration(
-                              labelText: 'Senha',
-                              icon: Icon(
-                                Icons.lock,
-                                color: Theme.of(context).primaryColorLight,
+                          Text(
+                            'Aguarde',
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      )
+                    ],
+                  ));
+            }
+          });
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                LoginHeader(),
+                SizedBox(
+                  width: 32,
+                  height: 52,
+                ),
+                HeadLine1(text: 'Login'),
+                SizedBox(
+                  width: 32,
+                  height: 52,
+                ),
+                Padding(
+                  padding: EdgeInsets.all(32),
+                  child: Form(
+                      child: Column(
+                    children: [
+                      StreamBuilder<String>(
+                          stream: presenter.emailErrorStream,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              decoration: InputDecoration(
+                                labelText: 'Email',
+                                icon: Icon(
+                                  Icons.email,
+                                  color: Theme.of(context).primaryColorLight,
+                                ),
+                                errorText: snapshot.data?.isEmpty == true
+                                    ? null
+                                    : snapshot.data,
                               ),
-                              errorText: snapshot.data?.isEmpty == true
-                                  ? null
-                                  : snapshot.data),
-                          obscureText: true,
-                          onChanged: presenter.validatePassword,
-                        );
-                      }),
-                  SizedBox(
-                    width: 32,
-                    height: 32,
-                  ),
-                  StreamBuilder<bool>(
-                      stream: presenter.isFormValidStream,
-                      builder: (context, snapshot) {
-                        return RaisedButton(
-                          onPressed: snapshot.data == true ? () {} : null,
-                          child: Text('Entrar'.toUpperCase()),
-                        );
-                      }),
-                  FlatButton.icon(
-                      onPressed: () {},
-                      icon: Icon(Icons.person),
-                      label: Text('Criar Conta'.toUpperCase()))
-                ],
-              )),
-            )
-          ],
-        ),
+                              keyboardType: TextInputType.emailAddress,
+                              onChanged: presenter.validateEmail,
+                            );
+                          }),
+                      StreamBuilder<String>(
+                          stream: presenter.passwordErrorStream,
+                          builder: (context, snapshot) {
+                            return TextFormField(
+                              decoration: InputDecoration(
+                                  labelText: 'Senha',
+                                  icon: Icon(
+                                    Icons.lock,
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                  errorText: snapshot.data?.isEmpty == true
+                                      ? null
+                                      : snapshot.data),
+                              obscureText: true,
+                              onChanged: presenter.validatePassword,
+                            );
+                          }),
+                      SizedBox(
+                        width: 32,
+                        height: 32,
+                      ),
+                      StreamBuilder<bool>(
+                          stream: presenter.isFormValidStream,
+                          builder: (context, snapshot) {
+                            return RaisedButton(
+                              onPressed:
+                                  snapshot.data == true ? presenter.auth : null,
+                              child: Text('Entrar'.toUpperCase()),
+                            );
+                          }),
+                      FlatButton.icon(
+                          onPressed: () {},
+                          icon: Icon(Icons.person),
+                          label: Text('Criar Conta'.toUpperCase()))
+                    ],
+                  )),
+                )
+              ],
+            ),
+          );
+        },
       ),
     );
   }
