@@ -2,9 +2,9 @@ import 'package:get/route_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:clean_code/ui/components/app_theme.dart';
+import 'factories/factory.dart';
 
-import 'factories/pages/login/login_page_factory.dart';
+import '../ui/components/components.dart';
 
 void main() {
   runApp(App());
