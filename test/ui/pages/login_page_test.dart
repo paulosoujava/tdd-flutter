@@ -17,36 +17,45 @@ void main() {
   StreamController<bool> isFormValidController;
   StreamController<bool> isLoadingController;
 
-  Future<void> loadPage(WidgetTester tester) async {
-    presenter = LoginPresenterSpy();
+  void initStreams() {
     emailErrorController = StreamController<String>();
     mainErrorController = StreamController<String>();
     passwordErrorController = StreamController<String>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
+  }
 
+  void closeStreams() {
+    emailErrorController.close();
+    passwordErrorController.close();
+    isFormValidController.close();
+    isLoadingController.close();
+    mainErrorController.close();
+  }
+
+  void mockStreams() {
     when(presenter.emailErrorStream)
         .thenAnswer((_) => emailErrorController.stream);
     when(presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
     when(presenter.mainErrorStream)
         .thenAnswer((_) => mainErrorController.stream);
-
     when(presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
     when(presenter.isLoadingStream)
         .thenAnswer((_) => isLoadingController.stream);
+  }
 
+  Future<void> loadPage(WidgetTester tester) async {
+    presenter = LoginPresenterSpy();
+    initStreams();
+    mockStreams();
     final loginPage = MaterialApp(home: LoginPage(presenter));
     await tester.pumpWidget(loginPage);
   }
 
   tearDown(() {
-    emailErrorController.close();
-    passwordErrorController.close();
-    isFormValidController.close();
-    isLoadingController.close();
-    mainErrorController.close();
+    closeStreams();
   });
 
   testWidgets('should load with correct initial state',
@@ -202,7 +211,13 @@ void main() {
     await loadPage(tester);
     mainErrorController.add('main error');
     await tester.pump();
-
     expect(find.text('main error'), findsOneWidget);
+  });
+
+  testWidgets('should close streams on dispose', (WidgetTester tester) async {
+    await loadPage(tester);
+    addTearDown(() {
+      verify(presenter.dispose()).called(1);
+    });
   });
 }
