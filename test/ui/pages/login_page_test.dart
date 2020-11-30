@@ -13,12 +13,14 @@ void main() {
   LoginPresenter presenter;
   StreamController<String> emailErrorController;
   StreamController<String> passwordErrorController;
+  StreamController<String> mainErrorController;
   StreamController<bool> isFormValidController;
   StreamController<bool> isLoadingController;
 
   Future<void> loadPage(WidgetTester tester) async {
     presenter = LoginPresenterSpy();
     emailErrorController = StreamController<String>();
+    mainErrorController = StreamController<String>();
     passwordErrorController = StreamController<String>();
     isFormValidController = StreamController<bool>();
     isLoadingController = StreamController<bool>();
@@ -27,6 +29,9 @@ void main() {
         .thenAnswer((_) => emailErrorController.stream);
     when(presenter.passwordErrorStream)
         .thenAnswer((_) => passwordErrorController.stream);
+    when(presenter.mainErrorStream)
+        .thenAnswer((_) => mainErrorController.stream);
+
     when(presenter.isFormValidStream)
         .thenAnswer((_) => isFormValidController.stream);
     when(presenter.isLoadingStream)
@@ -41,6 +46,7 @@ void main() {
     passwordErrorController.close();
     isFormValidController.close();
     isLoadingController.close();
+    mainErrorController.close();
   });
 
   testWidgets('should load with correct initial state',
@@ -61,6 +67,7 @@ void main() {
 
     final button = tester.widget<RaisedButton>(find.byType(RaisedButton));
     expect(button.onPressed, null);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
   });
 
   testWidgets('should call validate with correct values',
@@ -179,5 +186,23 @@ void main() {
     isLoadingController.add(true);
     await tester.pump();
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
+  });
+
+  testWidgets('should hide loading', (WidgetTester tester) async {
+    await loadPage(tester);
+    isLoadingController.add(true);
+    await tester.pump();
+    isLoadingController.add(false);
+    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('should present error message ig authentication fails',
+      (WidgetTester tester) async {
+    await loadPage(tester);
+    mainErrorController.add('main error');
+    await tester.pump();
+
+    expect(find.text('main error'), findsOneWidget);
   });
 }
