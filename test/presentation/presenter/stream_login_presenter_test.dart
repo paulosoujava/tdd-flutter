@@ -1,7 +1,9 @@
+import 'package:clean_code/domain/helpers/helpers.dart';
 import 'package:faker/faker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:clean_code/domain/entities/entities.dart';
 import 'package:clean_code/domain/usecases/authentication.dart';
 import 'package:clean_code/presentation/presenters/stream_login_presenter.dart';
 import 'package:clean_code/presentation/protocols/validation.dart';
@@ -19,8 +21,18 @@ void main() {
 
   PostExpectation mockValidationCall(String field) => when(validation.validate(field: field == null ? anyNamed('field') : field, value: anyNamed('value')));
 
+  PostExpectation mockAuthenticationCall() => when(authentication.auth(any));
+
   void mockValidation({String field, String value}) {
     mockValidationCall(field).thenReturn(value);
+  }
+
+  void mockAuthentication() {
+    mockAuthenticationCall().thenAnswer((_) async => AccountEntity(faker.guid.guid()));
+  }
+
+  void mockAuthenticationError(DomainError error) {
+    mockAuthenticationCall().thenThrow(error);
   }
 
   setUp(() {
@@ -30,6 +42,7 @@ void main() {
     email = faker.internet.email();
     password = faker.internet.password();
     mockValidation();
+    mockAuthentication();
   });
 
   test('should call validation with correct email', () {
@@ -106,5 +119,34 @@ void main() {
     await sut.auth();
 
     verify(authentication.auth(AuthenticationParams(email: email, secret: password))).called(1);
+  });
+
+  test('should emit correct events on Authentication success', () async {
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emitsInOrder([true, false]));
+    await sut.auth();
+  });
+
+  test('should emit correct events on InvalidCredentialsError', () async {
+    mockAuthenticationError(DomainError.invalidCredentials);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emits(false));
+    sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Credentiais inválidas')));
+
+    await sut.auth();
+  });
+  test('should emit correct events on UnexpectedError', () async {
+    mockAuthenticationError(DomainError.unexpected);
+    sut.validateEmail(email);
+    sut.validatePassword(password);
+
+    expectLater(sut.isLoadingStream, emits(false));
+    sut.mainErrorStream.listen(expectAsync1((error) => expect(error, 'Culpa do estagiário, tente mais tarde...')));
+
+    await sut.auth();
   });
 }
