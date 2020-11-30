@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../components/components.dart';
-import 'components/email_input.dart';
+import 'components/components.dart';
 import 'login_presenter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -59,38 +59,12 @@ class _LoginPageState extends State<LoginPage> {
                         child: Column(
                       children: [
                         EmailInput(),
-                        StreamBuilder<String>(
-                            stream: widget.presenter.passwordErrorStream,
-                            builder: (context, snapshot) {
-                              return TextFormField(
-                                decoration: InputDecoration(
-                                    labelText: 'Senha',
-                                    icon: Icon(
-                                      Icons.lock,
-                                      color:
-                                          Theme.of(context).primaryColorLight,
-                                    ),
-                                    errorText: snapshot.data?.isEmpty == true
-                                        ? null
-                                        : snapshot.data),
-                                obscureText: true,
-                                onChanged: widget.presenter.validatePassword,
-                              );
-                            }),
+                        PasswordInput(),
                         SizedBox(
                           width: 32,
                           height: 32,
                         ),
-                        StreamBuilder<bool>(
-                            stream: widget.presenter.isFormValidStream,
-                            builder: (context, snapshot) {
-                              return RaisedButton(
-                                onPressed: snapshot.data == true
-                                    ? widget.presenter.auth
-                                    : null,
-                                child: Text('Entrar'.toUpperCase()),
-                              );
-                            }),
+                        LoginButton(),
                         FlatButton.icon(
                             onPressed: () {},
                             icon: Icon(Icons.person),
